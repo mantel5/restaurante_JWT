@@ -20,6 +20,7 @@ namespace RestauranteAPI.Services
             _configuration = configuration;
         }
 
+        // devuelve un token JWT si el login es correcto, o null si no lo es
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var usuario = await _usuarioRepository.GetByEmailAsync(loginDto.Email);
@@ -32,6 +33,8 @@ namespace RestauranteAPI.Services
             return GenerateToken(usuario);
         }
 
+        // verifica si el usuario tiene acceso a un recurso (propio o de admin)
+        // así un random no puede acceder a datos de otros usuarios a excepción de ser admin
         public bool HasAccessToResource(int requestedUserId, ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
@@ -48,6 +51,7 @@ namespace RestauranteAPI.Services
             return isOwnResource || isAdmin;
         }
 
+        // genera un token JWT para el usuario autenticado
         private string GenerateToken(Usuario usuario)
         {
             var key = Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]);
