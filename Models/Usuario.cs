@@ -1,4 +1,4 @@
-namespace RestauranteAPI.Models 
+namespace RestauranteAPI.Models
 {
     public class Usuario
     {
@@ -6,6 +6,8 @@ namespace RestauranteAPI.Models
         public string Nombre { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Rol { get; set; } 
+        
+        public int RolId { get; set; } 
+        public Rol Rol { get; set; }   
     }
 }

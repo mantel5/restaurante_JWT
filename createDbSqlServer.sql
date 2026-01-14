@@ -35,19 +35,28 @@ CREATE TABLE Combo (
     Descuento DECIMAL(10, 2) NOT NULL CHECK (Descuento >= 0)
 );
 
+CREATE TABLE Rol (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE Usuario (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Nombre NVARCHAR(100),
-    Email NVARCHAR(100) UNIQUE,
-    Password NVARCHAR(100),
-    Rol NVARCHAR(50)
+    Email NVARCHAR(100) UNIQUE NOT NULL,
+    Password NVARCHAR(100) NOT NULL,
+    RolId INT NOT NULL, 
+    FOREIGN KEY (RolId) REFERENCES Rol(Id)
 );
 
-INSERT INTO Usuario (Nombre, Email, Password, Rol)
-VALUES ('Dueño Pepe', 'admin@restaurante.com', 'admin123', 'Admin');
+INSERT INTO Rol (Nombre) VALUES ('Admin');    
+INSERT INTO Rol (Nombre) VALUES ('Camarero'); 
 
-INSERT INTO Usuario (Nombre, Email, Password, Rol)
-VALUES ('Camarero Juan', 'juan@restaurante.com', '1234', 'Camarero');
+INSERT INTO Usuario (Nombre, Email, Password, RolId)
+VALUES ('Jefe Supremo', 'admin@restaurante.com', 'admin123', 1);
+
+INSERT INTO Usuario (Nombre, Email, Password, RolId)
+VALUES ('Camarero Juan', 'juan@restaurante.com', '1234', 2);
 
 INSERT INTO PlatoPrincipal (Nombre, Precio, Ingredientes)
 VALUES 

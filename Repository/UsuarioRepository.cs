@@ -1,7 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
-using RestauranteAPI.Models;
-using RestauranteAPI.Repositories;
+using RestauranteAPI.Models; 
+using RestauranteAPI.Repositories; 
 
 namespace RestauranteAPI.Repositories
 {
@@ -12,7 +12,7 @@ namespace RestauranteAPI.Repositories
         public UsuarioRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("RestauranteDB") 
-                ?? throw new Exception("¡Ojo! No encuentro 'RestauranteDB' en appsettings.json");
+                ?? throw new Exception("Error de conexión");
         }
 
         public async Task<Usuario?> GetByEmailAsync(string email)
@@ -20,7 +20,11 @@ namespace RestauranteAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT Id, Nombre, Email, Password, Rol FROM Usuario WHERE Email = @Email";
+                string query = @"
+                    SELECT u.Id, u.Nombre, u.Email, u.Password, u.RolId, r.Nombre as NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.RolId = r.Id
+                    WHERE u.Email = @Email";
 
                 using (var cmd = new SqlCommand(query, connection))
                 {
@@ -39,7 +43,11 @@ namespace RestauranteAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT Id, Nombre, Email, Password, Rol FROM Usuario WHERE Id = @Id";
+                string query = @"
+                    SELECT u.Id, u.Nombre, u.Email, u.Password, u.RolId, r.Nombre as NombreRol
+                    FROM Usuario u
+                    INNER JOIN Rol r ON u.RolId = r.Id
+                    WHERE u.Id = @Id";
 
                 using (var cmd = new SqlCommand(query, connection))
                 {
@@ -61,7 +69,13 @@ namespace RestauranteAPI.Repositories
                 Nombre = reader["Nombre"].ToString(),
                 Email = reader["Email"].ToString(),
                 Password = reader["Password"].ToString(),
-                Rol = reader["Rol"].ToString()
+                RolId = Convert.ToInt32(reader["RolId"]),
+                
+                Rol = new Rol 
+                { 
+                    Id = Convert.ToInt32(reader["RolId"]),
+                    Nombre = reader["NombreRol"].ToString() 
+                }
             };
         }
     }

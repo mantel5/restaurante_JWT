@@ -65,7 +65,7 @@ namespace RestauranteAPI.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                     new Claim(ClaimTypes.Name, usuario.Nombre),
-                    new Claim(ClaimTypes.Role, usuario.Rol),
+                    new Claim(ClaimTypes.Role, usuario.Rol.Nombre),
                     new Claim(ClaimTypes.Email, usuario.Email),
                 }),
                 
